@@ -2,6 +2,7 @@ package com.suncode.loginapi;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -22,7 +23,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText mEmailEditText;
     private EditText mPasswordEditText;
-    private Button mLoginButton;
+    private Button mLoginButton, mSignupButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +33,14 @@ public class LoginActivity extends AppCompatActivity {
         mEmailEditText = findViewById(R.id.editTextEmail);
         mPasswordEditText = findViewById(R.id.editTextPassword);
         mLoginButton = findViewById(R.id.buttonLogin);
+        mSignupButton = findViewById(R.id.buttonDaftar);
+
+        mSignupButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(), SignUpActivity.class));
+            }
+        });
 
         mLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,13 +61,22 @@ public class LoginActivity extends AppCompatActivity {
         call.enqueue(new Callback<Login>() {
             @Override
             public void onResponse(Call<Login> call, Response<Login> response) {
-//                Login data = response.body();
-//                Log.d("CHECKTAG", data.getError());
-//                Log.d("CHECKTAG", data.getMessage());
-//                Login.User user = data.getUser();
-//                Log.d("CHECKTAG", user.getEmail());
-
+                Login data = response.body();
+                Log.d("CHECKTAG", data.getError());
+                Log.d("CHECKTAG", data.getMessage());
                 Log.d("CHECKTAG", String.valueOf(response.code()));
+
+                try {
+                    Login.User user = data.getUser();
+                    Log.d("CHECKTAG", user.getEmail());
+
+                    shortToast("Hello " + user.getEmail());
+                } catch (NullPointerException e) {
+                    Log.d("CHECKTAG", "Account not match");
+
+                    shortToast("Account not match");
+                }
+
             }
 
             @Override
